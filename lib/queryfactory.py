@@ -1,6 +1,7 @@
 import mysql.connector
 import mysql
 import pandas as pd
+import time
 
 
 class QueryFactory:
@@ -22,7 +23,16 @@ class QueryFactory:
 
     def query(self, query):
         self.connect()
-        return pd.read_sql(query, con=self.conn)
+        for i in range(3):
+            try:
+                output=pd.read_sql(query, con=self.conn)
+            except Exception as e:
+                output=None
+                time.sleep(1)
+        if output is not None:
+            return output
+        else:
+            raise e
 
     def __init__(self, credentials):
         self.conn = None
