@@ -23,16 +23,19 @@ class QueryFactory:
 
     def query(self, query):
         self.connect()
+        output=None
+        ea=None
         for i in range(3):
             try:
                 output=pd.read_sql(query, con=self.conn)
             except Exception as e:
                 output=None
                 time.sleep(1)
+                ea=e
         if output is not None:
             return output
         else:
-            raise e
+            raise ea
 
     def __init__(self, credentials):
         self.conn = None
