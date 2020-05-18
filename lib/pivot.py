@@ -2,7 +2,7 @@ from pandas import DataFrame
 import pandas as pd
 import datetime
 import os
-
+import numpy as np
 
 class PivotCsv:
     def __init__(self, input_path, output_dir_path, cutoff=120):
@@ -27,7 +27,10 @@ class PivotCsv:
         final: DataFrame = symptoms.merge(out, left_index=True, right_index=True)
         return final
 
-    def process_workbook(self, patient_id):
+    def process_workbook(self, patient_id,progress=False):
+        if progress:
+            cnt = len(self.patient_ids)
+            print("{}\n".format(np.where(patient_id==self.patient_ids)[0]/cnt))
         types = self.df.query("idpaciente == @patient_id").tipo.unique()
         worksheets = [(symptomType, self.process_worksheet(patient_id, symptomType)) for symptomType in types]
         patient_name = self.df.query('idpaciente == @patient_id').Nome.unique()[0]
@@ -41,5 +44,5 @@ class PivotCsv:
             worksheet.to_excel(writer, sheet_name=symptomType, startrow=0, header=True, index=True)
         writer.save()
 
-    def process_folder(self):
-        [self.process_workbook(patient_id) for patient_id in self.patient_ids]
+    def process_folder(self,progress):
+        [self.process_workbook(patient_id,progress) for patient_id in self.patient_ids]

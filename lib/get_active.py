@@ -33,7 +33,7 @@ class Pipeline:
                                      "where data is not null " \
                                      "and data != '0000-00-00' " \
                                      "and idpaciente in {}"
-        patient_base_query = 'select idpaciente, Nome from jpaciente where idpaciente in {}'
+        patient_base_query = 'select distinct idpaciente, Nome from jpaciente where idpaciente in {}'
 
         return patient_query, sintomas_query, sintomas_diario_base_query, patient_base_query
 
