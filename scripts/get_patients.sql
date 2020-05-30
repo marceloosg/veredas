@@ -5,4 +5,4 @@ select idpaciente, data
 					where valor is not null and data is not null and data != '0000-00-00'
 					group by idpaciente 
 				 ) idp 
-				where data > '2019-12-31'
+				where data > '2020-02-01'
