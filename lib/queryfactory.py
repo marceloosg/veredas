@@ -22,14 +22,18 @@ class QueryFactory:
             cur.close()
 
     def query(self, query):
-        self.connect()
         output=None
         ea=None
-        for i in range(3):
+        max_tries = 5
+        for i in range(max_tries):
             try:
+                self.connect()
+                print("sending query {}".format(self.conn.is_connected()))
                 output=pd.read_sql(query, con=self.conn)
+                break
             except Exception as e:
                 output=None
+                print("Connection Failed: Attempt {} out of {}".format(i+2, max_tries))
                 time.sleep(1)
                 ea=e
         if output is not None:
