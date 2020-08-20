@@ -2,31 +2,32 @@ from lib.queryfactory import QueryFactory
 import os
 import pandas as pd
 
+
 class Pipeline:
 
-    def __init__(self, path="scripts"):
-        self.path = path
+    def __init__(self):
+        relative=os.path.dirname(os.path.realpath(__file__))
+        self.path = relative
+        self.script_path = os.path.join(self.path,'../scripts')
         self.credentials = self.get_credentials()
         self.patient_query, self.sintomas_query, self.sintomas_diario_base_query, self.patient_base_query = self.get_queries()
         self.engine = QueryFactory(self.credentials)
 
-
-    @staticmethod
-    def read_vars(file):
+    def read_vars(self, file):
         file = 'mysql_' + file
-        fn = os.path.join('scripts', file)
+        fn = os.path.join(self.script_path, file)
         out = ""
         with open(fn, 'r') as f:
             out = f.read().strip('\n')
         return out
 
     def get_credentials(self):
-        vars = [f.split("_")[1] for f in os.listdir(self.path) if 'mysql' in f]
+        vars = [f.split("_")[1] for f in os.listdir(self.script_path) if 'mysql' in f]
         return dict([(f, self.read_vars(f)) for f in vars])
 
     def get_queries(self):
         patient_query = ""
-        with open(os.path.join(self.path, 'get_patients.sql'), 'r') as f:
+        with open(os.path.join(self.script_path, 'get_patients.sql'), 'r') as f:
             patient_query = f.read()
 
         sintomas_query = 'select idsintomasGeral idsintoma, replace(Nome,";"," ") sintoma, tipo from jsintomasgeral'
@@ -69,9 +70,11 @@ class Pipeline:
         glist = [id for id in id_list]
         print("Retrieving Paged data from List {}".format(glist))
         result_list=[self.get_page_patient_data(id_chunck, sintomas) for id_chunck in glist]
-        #print(result_list)
+        print(len(result_list))
         active_datas = pd.concat(result_list)
         print("Done")
 
-        fn = os.path.join('input', 'active.csv')
+        fn = os.path.join(self.path, '../input', 'active.csv')
+        print(fn)
         active_datas.to_csv(fn, sep=';', index=False)
+        return active_datas

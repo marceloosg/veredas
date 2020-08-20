@@ -6,4 +6,4 @@ select idpaciente, data
 					and idpaciente
 					group by idpaciente 
 				 ) idp 
-				where data > '2020-06-01'
+				where data > '2020-07-01'

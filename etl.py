@@ -1,12 +1,9 @@
 from lib.get_active import Pipeline
-from time import time
-active=Pipeline()
-z=time()
-print("Get Data {}".format(time()-z))
-active.get_patient_data()
+import os
 from lib.pivot import PivotCsv
-print("Pivot {}".format(time()-z))
-p=PivotCsv('input/active.csv' ,"Pacientes Isabel_")
+active=Pipeline()
+active.get_patient_data(10)
+path=os.path.dirname(os.path.realpath(__file__))
+p=PivotCsv(path+'/input/active.csv' ,os.path.join("C:/Users/marce/OneDrive/Projects/Veredas","Pacientes Isabel_"))
 p.process_folder(True)
-print("End Pivot {}".format(time()-z))
-
+#input("press any key to end")
